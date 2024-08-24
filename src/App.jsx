@@ -1,5 +1,6 @@
 import React from "react";
 import QuizPage from "./components/QuizPage"; // Assuming the QuizPage component is in the same directory
+import MakeQuizPage from "./components/MakeQuizPage";
 
 function App() {
   const questions = [
@@ -67,7 +68,9 @@ function App() {
 
   return (
     <div className="App">
-      <QuizPage questions={questions} />
+      {/* <MakeQuizPage />
+       */}
+      <QuizPage />
     </div>
   );
 }
