@@ -3,9 +3,9 @@ import QuestionField from "./QuestionField";
 import QuizField from "./QuizField";
 import { v4 as uuidv4 } from "uuid"; // Import UUID for generating unique IDs
 
-const MakeQuizPage = () => {
+const MakeQuizPage = ({ walletAddress }) => {
   const [quizId, setQuizId] = useState(uuidv4()); // Generate a unique quiz ID
-  const [quizCreator, setQuizCreator] = useState(""); // State for Ethereum user public key
+  const [quizCreator, setQuizCreator] = useState(walletAddress || ""); // Set to walletAddress if available
   const [questions, setQuestions] = useState([
     {
       questionId: 1,
@@ -32,6 +32,13 @@ const MakeQuizPage = () => {
       }))
     );
   }, [quizId]);
+
+  useEffect(() => {
+    // Set quizCreator when walletAddress is available
+    if (walletAddress) {
+      setQuizCreator(walletAddress);
+    }
+  }, [walletAddress]);
 
   const handleQuestionChange = (qIndex, field, value) => {
     const updatedQuestions = [...questions];
@@ -125,9 +132,9 @@ const MakeQuizPage = () => {
         <input
           type="text"
           value={quizCreator}
-          onChange={(e) => setQuizCreator(e.target.value)}
-          placeholder="Enter Ethereum Public Key"
+          placeholder="Ethereum Public Key"
           style={styles.input}
+          readOnly // Make the input read-only since it's auto-filled
         />
       </div>
 
@@ -169,7 +176,6 @@ const MakeQuizPage = () => {
     </div>
   );
 };
-
 const styles = {
   container: {
     padding: "20px",
@@ -186,6 +192,8 @@ const styles = {
     marginTop: "5px",
     borderRadius: "4px",
     border: "1px solid #ccc",
+    backgroundColor: "#333", // Dark background color to match the theme
+    color: "#fff", // Light text color for readability
   },
   flexContainer: {
     display: "flex",

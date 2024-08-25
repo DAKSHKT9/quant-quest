@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Quizes from "./components/Quizes";
 import MakeQuizPage from "./components/MakeQuizPage";
 import QuizPage from "./components/QuizPage";
-import { useState } from "react";
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null); // State for the user's wallet address
@@ -25,9 +24,11 @@ function App() {
             }
           />
           <Route path="/learn" element={<Quizes />} />
-          <Route path="/create" element={<MakeQuizPage />} />
-          <Route path="/quiz" element={<QuizPage />} />{" "}
-          {/* Route for QuizPage */}
+          <Route
+            path="/create"
+            element={<MakeQuizPage walletAddress={walletAddress} />}
+          />
+          <Route path="/quiz" element={<QuizPage />} />
         </Routes>
       </div>
     </Router>

@@ -1,6 +1,8 @@
 import React from "react";
 
 const Home = ({ walletAddress, setWalletAddress }) => {
+  let subscribed = true;
+
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
@@ -23,7 +25,11 @@ const Home = ({ walletAddress, setWalletAddress }) => {
     <div style={styles.container}>
       <h2>Welcome to My Quiz App</h2>
       {walletAddress ? (
-        <p>Connected Account: {walletAddress}</p>
+        <>
+          <p>Connected Account: {walletAddress}</p>
+
+          {subscribed ? <button>Buy Subscription </button> : <div></div>}
+        </>
       ) : (
         <>
           <p>Connect your MetaMask wallet to start using the app.</p>
