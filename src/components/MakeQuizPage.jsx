@@ -6,18 +6,18 @@ const MakeQuizPage = () => {
   const [questions, setQuestions] = useState([
     {
       questionId: 1,
-      quizId: "quiz123", 
+      quizId: "quiz123",
       questionText: "",
-      options: ["", "", "", ""], 
+      options: ["", "", "", ""],
       correctOption: 0,
       explanation: "",
       pointsAwarded: 0,
     },
   ]);
 
-  const [quizGenre, setQuizGenre] = useState(""); 
-  const [quizDescription, setQuizDescription] = useState(""); 
-  const [timeLimit, setTimeLimit] = useState(""); 
+  const [quizGenre, setQuizGenre] = useState("");
+  const [quizDescription, setQuizDescription] = useState("");
+  const [timeLimit, setTimeLimit] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const handleQuestionChange = (qIndex, field, value) => {
@@ -38,7 +38,13 @@ const MakeQuizPage = () => {
   const validateQuestions = () => {
     // Check if all questions and their respective fields are filled
     for (let question of questions) {
-      if (!question.questionText || question.options.some(option => option === "") || question.correctOption === null || question.explanation === "" || question.pointsAwarded === 0) {
+      if (
+        !question.questionText ||
+        question.options.some((option) => option === "") ||
+        question.correctOption === null ||
+        question.explanation === "" ||
+        question.pointsAwarded === 0
+      ) {
         setErrorMessage("All fields in each question must be filled.");
         return false;
       }
@@ -52,7 +58,7 @@ const MakeQuizPage = () => {
 
     const newQuestion = {
       questionId: questions.length + 1,
-      quizId: "quiz123", 
+      quizId: "quiz123",
       questionText: "",
       options: ["", "", "", ""],
       correctOption: 0,
@@ -73,15 +79,17 @@ const MakeQuizPage = () => {
       questions: questions,
     };
     console.log(JSON.stringify(quizData, null, 2));
-    setQuestions([{
-      questionId: 1,
-      quizId: "quiz123", 
-      questionText: "",
-      options: ["", "", "", ""],
-      correctOption: 0,
-      explanation: "",
-      pointsAwarded: 0,
-    }]);
+    setQuestions([
+      {
+        questionId: 1,
+        quizId: "quiz123",
+        questionText: "",
+        options: ["", "", "", ""],
+        correctOption: 0,
+        explanation: "",
+        pointsAwarded: 0,
+      },
+    ]);
     setQuizGenre("");
     setQuizDescription("");
     setTimeLimit("");
@@ -96,8 +104,12 @@ const MakeQuizPage = () => {
 
       {/* Button container positioned absolutely */}
       <div style={styles.buttonContainer}>
-        <button onClick={addQuestion} style={styles.button}>Add Question</button>
-        <button onClick={handleSubmit} style={styles.button}>Submit Quiz</button>
+        <button onClick={addQuestion} style={styles.button}>
+          Add Question
+        </button>
+        <button onClick={handleSubmit} style={styles.button}>
+          Submit Quiz
+        </button>
       </div>
 
       {/* Two-column layout */}

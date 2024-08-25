@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import "./QuizPage";
 
 const QuizPage = () => {
+  const userPublicKey = "user-public-key-placeholder"; // Replace with actual user public key
+  const quizId = "quiz-id-placeholder"; // Replace with actual quiz ID
+
   const questions = [
     {
       question: "What is the largest ocean on Earth?",
@@ -11,6 +14,7 @@ const QuizPage = () => {
         "Indian Ocean",
         "Arctic Ocean",
       ],
+      correctAnswer: 0,
     },
     {
       question: "Who wrote the play 'Romeo and Juliet'?",
@@ -20,18 +24,22 @@ const QuizPage = () => {
         "Oscar Wilde",
         "Jane Austen",
       ],
+      correctAnswer: 0,
     },
     {
       question: "Which element has the chemical symbol 'O'?",
       answers: ["Oxygen", "Gold", "Osmium", "Oganesson"],
+      correctAnswer: 0,
     },
     {
       question: "What is the currency of Japan?",
       answers: ["Yen", "Dollar", "Euro", "Won"],
+      correctAnswer: 0,
     },
     {
       question: "Which planet is the closest to the Sun?",
       answers: ["Mercury", "Venus", "Earth", "Mars"],
+      correctAnswer: 0,
     },
     {
       question: "Who is known as the 'Father of Computers'?",
@@ -41,18 +49,22 @@ const QuizPage = () => {
         "John von Neumann",
         "Bill Gates",
       ],
+      correctAnswer: 0,
     },
     {
       question: "What is the hardest natural substance on Earth?",
       answers: ["Diamond", "Gold", "Iron", "Platinum"],
+      correctAnswer: 0,
     },
     {
       question: "Which continent is known as the 'Dark Continent'?",
       answers: ["Africa", "Asia", "Australia", "South America"],
+      correctAnswer: 0,
     },
     {
       question: "Which is the longest river in the world?",
       answers: ["Nile", "Amazon", "Yangtze", "Mississippi"],
+      correctAnswer: 0,
     },
     {
       question: "Who discovered penicillin?",
@@ -62,13 +74,20 @@ const QuizPage = () => {
         "Isaac Newton",
         "Louis Pasteur",
       ],
+      correctAnswer: 0,
     },
   ];
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [userAnswers, setUserAnswers] = useState([]);
 
-  const nextQuestion = () => {
+  const nextQuestion = (answerStatus) => {
+    setUserAnswers([
+      ...userAnswers,
+      { questionIndex: currentQuestionIndex, status: answerStatus },
+    ]);
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -76,15 +95,26 @@ const QuizPage = () => {
     }
   };
 
-  const handleAnswerClick = () => {
-    nextQuestion();
+  const handleAnswerClick = (index) => {
+    const answerStatus =
+      index === questions[currentQuestionIndex].correctAnswer
+        ? "correct"
+        : "wrong";
+    nextQuestion(answerStatus);
   };
 
   const handleSkipClick = () => {
-    nextQuestion();
+    nextQuestion("unattempted");
   };
 
   if (quizCompleted) {
+    const userSolvedQuiz = {
+      userPublicKey,
+      quizId,
+      answers: userAnswers,
+    };
+    console.log(JSON.stringify(userSolvedQuiz, null, 2)); // Log the JSON object
+
     return (
       <div style={styles.container}>
         <h2>Quiz Completed!</h2>
@@ -101,7 +131,7 @@ const QuizPage = () => {
           {questions[currentQuestionIndex].answers.map((answer, index) => (
             <button
               key={index}
-              onClick={handleAnswerClick}
+              onClick={() => handleAnswerClick(index)}
               style={styles.answerButton}
             >
               {answer}
