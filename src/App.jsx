@@ -5,14 +5,25 @@ import Home from "./components/Home";
 import Quizes from "./components/Quizes";
 import MakeQuizPage from "./components/MakeQuizPage";
 import QuizPage from "./components/QuizPage";
+import { useState } from "react";
 
 function App() {
+  const [walletAddress, setWalletAddress] = useState(null); // State for the user's wallet address
+
   return (
     <Router>
       <Navbar />
       <div style={{ paddingTop: "70px", padding: "20px" }}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={
+              <Home
+                walletAddress={walletAddress}
+                setWalletAddress={setWalletAddress}
+              />
+            }
+          />
           <Route path="/learn" element={<Quizes />} />
           <Route path="/create" element={<MakeQuizPage />} />
           <Route path="/quiz" element={<QuizPage />} />{" "}

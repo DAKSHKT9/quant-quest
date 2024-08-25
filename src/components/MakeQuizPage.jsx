@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import QuestionField from "./QuestionField";
 import QuizField from "./QuizField";
+import { v4 as uuidv4 } from "uuid"; // Import UUID for generating unique IDs
 
 const MakeQuizPage = () => {
+  const [quizId, setQuizId] = useState(uuidv4()); // Generate a unique quiz ID
+  const [quizCreator, setQuizCreator] = useState(""); // State for Ethereum user public key
   const [questions, setQuestions] = useState([
     {
       questionId: 1,
-      quizId: "quiz123",
+      quizId: quizId,
       questionText: "",
       options: ["", "", "", ""],
       correctOption: 0,
@@ -20,6 +23,16 @@ const MakeQuizPage = () => {
   const [timeLimit, setTimeLimit] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
+  useEffect(() => {
+    // Update the quizId in all questions when quizId changes
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((question) => ({
+        ...question,
+        quizId: quizId,
+      }))
+    );
+  }, [quizId]);
+
   const handleQuestionChange = (qIndex, field, value) => {
     const updatedQuestions = [...questions];
     updatedQuestions[qIndex][field] = value;
@@ -28,8 +41,10 @@ const MakeQuizPage = () => {
 
   const validateQuizFields = () => {
     // Check if any of the quiz fields are empty
-    if (!quizGenre || !quizDescription || !timeLimit) {
-      setErrorMessage("All quiz fields must be filled.");
+    if (!quizGenre || !quizDescription || !timeLimit || !quizCreator) {
+      setErrorMessage(
+        "All quiz fields must be filled, including the Quiz Creator."
+      );
       return false;
     }
     return true;
@@ -58,7 +73,7 @@ const MakeQuizPage = () => {
 
     const newQuestion = {
       questionId: questions.length + 1,
-      quizId: "quiz123",
+      quizId: quizId,
       questionText: "",
       options: ["", "", "", ""],
       correctOption: 0,
@@ -73,6 +88,8 @@ const MakeQuizPage = () => {
     setErrorMessage(""); // Clear any previous error message
 
     const quizData = {
+      quizId: quizId,
+      quizCreator: quizCreator, // Add quiz creator to the quiz data
       genre: quizGenre,
       description: quizDescription,
       timeLimit: timeLimit,
@@ -82,7 +99,7 @@ const MakeQuizPage = () => {
     setQuestions([
       {
         questionId: 1,
-        quizId: "quiz123",
+        quizId: quizId,
         questionText: "",
         options: ["", "", "", ""],
         correctOption: 0,
@@ -93,6 +110,7 @@ const MakeQuizPage = () => {
     setQuizGenre("");
     setQuizDescription("");
     setTimeLimit("");
+    setQuizCreator(""); // Reset the quiz creator field
   };
 
   return (
@@ -101,6 +119,17 @@ const MakeQuizPage = () => {
 
       {/* Display error message if any */}
       {errorMessage && <div style={styles.error}>{errorMessage}</div>}
+
+      <div style={styles.field}>
+        <label>Quiz Creator (Ethereum Public Key):</label>
+        <input
+          type="text"
+          value={quizCreator}
+          onChange={(e) => setQuizCreator(e.target.value)}
+          placeholder="Enter Ethereum Public Key"
+          style={styles.input}
+        />
+      </div>
 
       {/* Button container positioned absolutely */}
       <div style={styles.buttonContainer}>
@@ -147,6 +176,16 @@ const styles = {
     maxWidth: "1200px",
     margin: "0 auto",
     position: "relative", // Ensure container is positioned relative for absolute positioning of buttonContainer
+  },
+  field: {
+    marginBottom: "20px",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    marginTop: "5px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
   },
   flexContainer: {
     display: "flex",
