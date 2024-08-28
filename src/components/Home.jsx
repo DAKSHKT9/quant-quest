@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import Register from "./Register";
 
 const Home = ({ walletAddress, setWalletAddress }) => {
-  let subscribed = true;
+  const [showRegister, setShowRegister] = useState(false);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -21,96 +22,15 @@ const Home = ({ walletAddress, setWalletAddress }) => {
     }
   };
 
-  const buySubscription = async () => {
-    if (!walletAddress) {
-      alert("Please connect your wallet first.");
-      return;
-    }
-
-    try {
-      // Connect to Ethereum provider
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      // Contract details
-      const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with your contract address
-      const contractABI = [
-        {
-          inputs: [],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "buy_subscription",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address[]",
-              name: "toppers",
-              type: "address[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "payment",
-              type: "uint256[]",
-            },
-          ],
-          name: "weekly_pay",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ];
-      // Create a contract instance
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-
-      // Send a transaction to call buySubscription
-      const tx = await contract.buySubscription({
-        value: ethers.utils.parseEther("0.1"), // Replace with the correct value required for the subscription
-      });
-
-      console.log("Transaction sent:", tx.hash);
-
-      // Wait for the transaction to be mined
-      await tx.wait();
-      console.log("Transaction confirmed:", tx.hash);
-      alert("Subscription purchased successfully!");
-    } catch (error) {
-      console.error("Transaction failed:", error);
-      alert("Transaction failed. Please try again.");
-    }
+  const handleRegisterSubmit = (email, username) => {
+    console.log(
+      "User registered with email:",
+      email,
+      "and username:",
+      username
+    );
+    setShowRegister(false);
+    connectWallet(); // Trigger MetaMask popup after registration
   };
 
   return (
@@ -119,20 +39,33 @@ const Home = ({ walletAddress, setWalletAddress }) => {
       {walletAddress ? (
         <>
           <p>Connected Account: {walletAddress}</p>
-
-          {subscribed ? (
-            <button onClick={buySubscription}>Buy Subscription </button>
-          ) : (
-            <div></div>
-          )}
         </>
       ) : (
         <>
           <p>Connect your MetaMask wallet to start using the app.</p>
           <button onClick={connectWallet} style={styles.button}>
-            Connect MetaMask Wallet
+            Connect Wallet
+          </button>
+          <button
+            onClick={() => setShowRegister(true)}
+            style={{ ...styles.button, marginTop: "10px" }}
+          >
+            Get Started
           </button>
         </>
+      )}
+      {showRegister && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modal}>
+            <Register onSubmit={handleRegisterSubmit} />
+            <button
+              onClick={() => setShowRegister(false)}
+              style={styles.closeButton}
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -154,6 +87,32 @@ const styles = {
     color: "#fff",
     cursor: "pointer",
     fontSize: "16px",
+  },
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modal: {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "5px",
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    backgroundColor: "transparent",
+    border: "none",
+    fontSize: "20px",
+    cursor: "pointer",
   },
 };
 
