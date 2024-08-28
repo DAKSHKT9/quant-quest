@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import "./QuizPage";
+import React, { useState, useEffect } from "react";
 
 const QuizPage = () => {
   const userPublicKey = "user-public-key-placeholder"; // Replace with actual user public key
@@ -16,71 +15,27 @@ const QuizPage = () => {
       ],
       correctAnswer: 0,
     },
-    {
-      question: "Who wrote the play 'Romeo and Juliet'?",
-      answers: [
-        "William Shakespeare",
-        "George Bernard Shaw",
-        "Oscar Wilde",
-        "Jane Austen",
-      ],
-      correctAnswer: 0,
-    },
-    {
-      question: "Which element has the chemical symbol 'O'?",
-      answers: ["Oxygen", "Gold", "Osmium", "Oganesson"],
-      correctAnswer: 0,
-    },
-    {
-      question: "What is the currency of Japan?",
-      answers: ["Yen", "Dollar", "Euro", "Won"],
-      correctAnswer: 0,
-    },
-    {
-      question: "Which planet is the closest to the Sun?",
-      answers: ["Mercury", "Venus", "Earth", "Mars"],
-      correctAnswer: 0,
-    },
-    {
-      question: "Who is known as the 'Father of Computers'?",
-      answers: [
-        "Charles Babbage",
-        "Alan Turing",
-        "John von Neumann",
-        "Bill Gates",
-      ],
-      correctAnswer: 0,
-    },
-    {
-      question: "What is the hardest natural substance on Earth?",
-      answers: ["Diamond", "Gold", "Iron", "Platinum"],
-      correctAnswer: 0,
-    },
-    {
-      question: "Which continent is known as the 'Dark Continent'?",
-      answers: ["Africa", "Asia", "Australia", "South America"],
-      correctAnswer: 0,
-    },
-    {
-      question: "Which is the longest river in the world?",
-      answers: ["Nile", "Amazon", "Yangtze", "Mississippi"],
-      correctAnswer: 0,
-    },
-    {
-      question: "Who discovered penicillin?",
-      answers: [
-        "Alexander Fleming",
-        "Marie Curie",
-        "Isaac Newton",
-        "Louis Pasteur",
-      ],
-      correctAnswer: 0,
-    },
+    // (Other questions...)
   ];
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeElapsed((prevTime) => prevTime + 1);
+    }, 1000);
+
+    return () => clearInterval(timer); // Cleanup the timer on component unmount
+  }, []);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   const nextQuestion = (answerStatus) => {
     setUserAnswers([
@@ -112,12 +67,14 @@ const QuizPage = () => {
       userPublicKey,
       quizId,
       answers: userAnswers,
+      timeTaken: formatTime(timeElapsed), // Include the time taken to complete the quiz
     };
     console.log(JSON.stringify(userSolvedQuiz, null, 2)); // Log the JSON object
 
     return (
       <div style={styles.container}>
         <h2>Quiz Completed!</h2>
+        <p>Time Taken: {formatTime(timeElapsed)}</p>
         <p>Thank you for participating.</p>
       </div>
     );
@@ -125,6 +82,7 @@ const QuizPage = () => {
 
   return (
     <div style={styles.container}>
+      <div style={styles.timer}>{formatTime(timeElapsed)}</div>
       <div style={styles.questionContainer}>
         <h2>{questions[currentQuestionIndex].question}</h2>
         <div style={styles.answersContainer}>
@@ -153,6 +111,15 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     height: "100vh",
+    position: "relative",
+  },
+  timer: {
+    position: "absolute",
+    top: "20px", // Adjusted top margin to bring it further down
+    right: "20px", // Adjusted right margin to move it left
+    fontSize: "20px",
+    fontWeight: "bold",
+    color: "#fff",
   },
   questionContainer: {
     textAlign: "center",

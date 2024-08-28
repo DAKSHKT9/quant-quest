@@ -1,7 +1,14 @@
 // QuizField.jsx
 import React from "react";
 
-const QuizField = ({ quizGenre, setQuizGenre, quizDescription, setQuizDescription, timeLimit, setTimeLimit }) => {
+const QuizField = ({
+  quizGenre,
+  setQuizGenre,
+  quizDescription,
+  setQuizDescription,
+  timeLimit,
+  setTimeLimit,
+}) => {
   return (
     <div style={styles.container}>
       <input

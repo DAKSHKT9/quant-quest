@@ -26,7 +26,7 @@ const quizzes = [
 const Quizes = () => {
   return (
     <div>
-      <h2>Available Quizzes</h2>
+      <h2>Available Quizzes 2</h2>
       <div style={styles.quizContainer}>
         {quizzes.map((quiz) => (
           <QuizCard
